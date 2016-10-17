@@ -63,16 +63,18 @@
 					ctx.strokeRect(this.mx*32, this.my*32,32,32);
 				},
 				move: function(dt){
-					this.x = this.x + this.vx*dt;
-					this.y = this.y + this.vy*dt;
-
 					this.vx = this.vx + this.ax*dt;
 					this.vy = this.vy + this.ay*dt + g*dt;
-
+					var dy = this.vy*dt;
 					if(mapa[this.my+1][this.mx] == 1 && this.vy>0){
-						this.y = (this.my+1)*32-1;
-						this.vy = 0;
+						//this.y = (this.my+1)*32-1;
+						dy = Math.round(Math.min((this.my+1)*32-this.y-1, this.vy*dt));
+						if(Math.abs(dy)<0.001) this.vy = 0;
 					}
+					this.x = this.x + this.vx*dt;
+					this.y = this.y + dy;
+
+
 					this.mx = Math.floor(this.x/32);
 					this.my = Math.floor(this.y/32);
 				}
@@ -89,6 +91,19 @@
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				pc.desenha(ctx);
+				ctx.beginPath()
+				ctx.strokeStyle = "blue";
+				ctx.moveTo(0,pc.my*32);
+				ctx.lineTo(tela.height, pc.my*32)
+				ctx.closePath();
+				ctx.stroke();
+				ctx.beginPath()
+				ctx.strokeStyle = "yellow";
+				ctx.moveTo(0,(pc.my+1)*32);
+				ctx.lineTo(tela.height, (pc.my+1)*32)
+				ctx.closePath();
+				ctx.stroke();
+
 			}
 
 			function desenhaMapa(){
@@ -112,8 +127,8 @@
 						e.preventDefault();
 						break;
 					case 38:
-						if(pc.y==100){
-							pc.vy = pc.vy-200;
+						if(pc.vy == 0 && mapa[pc.my+1][pc.mx] == 1){
+							pc.vy = pc.vy -150;
 						}
 						e.preventDefault();
 						break;
