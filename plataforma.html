@@ -27,8 +27,8 @@
 				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,1,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,0,0,0, 0,0,0,1,1, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 1,1,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,1,0, 0,0,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,0,1,0, 1,1,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,0,0,0, 1,1,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
 				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
 			];
@@ -65,13 +65,24 @@
 				move: function(dt){
 					this.vx = this.vx + this.ax*dt;
 					this.vy = this.vy + this.ay*dt + g*dt;
+					var dx = this.vx*dt;
 					var dy = this.vy*dt;
-					if(mapa[this.my+1][this.mx] == 1 && this.vy>0){
-						//this.y = (this.my+1)*32-1;
-						dy = Math.round(Math.min((this.my+1)*32-this.y-1, this.vy*dt));
-						if(Math.abs(dy)<0.001) this.vy = 0;
+					if(mapa[this.my][this.mx+1] == 1 && this.vx>0){
+						dx = Math.round(Math.min((this.mx+1)*32-this.x-8, this.vx*dt));
+						if(Math.abs(dx)<0.001) this.vx = 0;
 					}
-					this.x = this.x + this.vx*dt;
+					if(mapa[this.my][this.mx-1] == 1 && this.vx<0){
+						dx = Math.round(Math.max((this.mx*32)-this.x+8, this.vx*dt));
+						if(Math.abs(dx)<0.001) this.vx = 0;
+					}
+					if(mapa[this.my-1][this.mx] == 1 && this.vy<0){
+						dy = Math.round(Math.max((this.my)*32-this.y+16, this.vy*dt));
+					}
+					if(mapa[this.my+1][this.mx] == 1 && this.vy>0){
+						dy = Math.round(Math.min((this.my+1)*32-this.y-1, this.vy*dt));
+					}
+					if(Math.abs(dy)<0.001) this.vy = 0;
+					this.x = this.x + dx;
 					this.y = this.y + dy;
 
 
@@ -100,7 +111,13 @@
 				ctx.beginPath()
 				ctx.strokeStyle = "yellow";
 				ctx.moveTo(0,(pc.my+1)*32);
-				ctx.lineTo(tela.height, (pc.my+1)*32)
+				ctx.lineTo(tela.width, (pc.my+1)*32)
+				ctx.closePath();
+				ctx.stroke();
+				ctx.beginPath()
+				ctx.strokeStyle = "yellow";
+				ctx.moveTo(pc.mx*32,0);
+				ctx.lineTo(pc.mx*32,tela.height)
 				ctx.closePath();
 				ctx.stroke();
 
@@ -128,7 +145,7 @@
 						break;
 					case 38:
 						if(pc.vy == 0 && mapa[pc.my+1][pc.mx] == 1){
-							pc.vy = pc.vy -150;
+							pc.vy = pc.vy -190;
 						}
 						e.preventDefault();
 						break;
