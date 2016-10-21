@@ -20,15 +20,17 @@ SpriteInMap.prototype.desenha = function(ctx){
       ctx.drawImage(imgPc,0,0,32,32,-16,-32,32,32);
       ctx.restore();
     }
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.moveTo(this.x-5,this.y-5);
-    ctx.lineTo(this.x+5,this.y+5);
-    ctx.lineTo(this.x+5,this.y-5);
-    ctx.lineTo(this.x-5,this.y+5);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.strokeRect(this.mx*32, this.my*32,32,32);
+    if(this.debug){
+      ctx.strokeStyle = "red";
+      ctx.beginPath();
+      ctx.moveTo(this.x-5,this.y-5);
+      ctx.lineTo(this.x+5,this.y+5);
+      ctx.lineTo(this.x+5,this.y-5);
+      ctx.lineTo(this.x-5,this.y+5);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.strokeRect(this.mx*32, this.my*32,32,32);
+    }
   };
 
 SpriteInMap.prototype.move = function(dt){
@@ -44,6 +46,9 @@ SpriteInMap.prototype.move = function(dt){
       dx = Math.round(Math.max((this.mx*32)-this.x+8, this.vx*dt));
       if(Math.abs(dx)<0.001) this.vx = 0;
     }
+    this.x = this.x + dx;
+    this.mx = Math.floor(this.x/32);
+    
     if(mapa[this.my-1][this.mx] == 1 && this.vy<0){
       dy = Math.round(Math.max((this.my)*32-this.y+16, this.vy*dt));
     }
@@ -51,10 +56,8 @@ SpriteInMap.prototype.move = function(dt){
       dy = Math.round(Math.min((this.my+1)*32-this.y-1, this.vy*dt));
     }
     if(Math.abs(dy)<0.001) this.vy = 0;
-    this.x = this.x + dx;
     this.y = this.y + dy;
 
 
-    this.mx = Math.floor(this.x/32);
     this.my = Math.floor(this.y/32);
   };

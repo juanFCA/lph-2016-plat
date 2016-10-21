@@ -46,25 +46,6 @@
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				pc.desenha(ctx);
-				ctx.beginPath()
-				ctx.strokeStyle = "blue";
-				ctx.moveTo(0,pc.my*32);
-				ctx.lineTo(tela.height, pc.my*32)
-				ctx.closePath();
-				ctx.stroke();
-				ctx.beginPath()
-				ctx.strokeStyle = "yellow";
-				ctx.moveTo(0,(pc.my+1)*32);
-				ctx.lineTo(tela.width, (pc.my+1)*32)
-				ctx.closePath();
-				ctx.stroke();
-				ctx.beginPath()
-				ctx.strokeStyle = "yellow";
-				ctx.moveTo(pc.mx*32,0);
-				ctx.lineTo(pc.mx*32,tela.height)
-				ctx.closePath();
-				ctx.stroke();
-
 			}
 
 			function desenhaMapa(){
