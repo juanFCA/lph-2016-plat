@@ -48,7 +48,7 @@ SpriteInMap.prototype.move = function(dt){
     }
     this.x = this.x + dx;
     this.mx = Math.floor(this.x/32);
-    
+
     if(mapa[this.my-1][this.mx] == 1 && this.vy<0){
       dy = Math.round(Math.max((this.my)*32-this.y+16, this.vy*dt));
     }
@@ -61,3 +61,18 @@ SpriteInMap.prototype.move = function(dt){
 
     this.my = Math.floor(this.y/32);
   };
+
+SpriteInMap.prototype.colidiuCom = function(outro){
+  if(this.x+16/2 < outro.x-16/2){
+    return false;
+  } else if(this.x-16/2 > outro.x+16/2){
+    return false;
+  }else if(this.y+16/2 < outro.y-16/2){
+    return false;
+  } else if(this.y-16/2 > outro.y+16/2){
+    return false;
+  } else{
+    return true;
+  }
+
+}

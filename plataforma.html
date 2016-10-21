@@ -27,25 +27,63 @@
 				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,1,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,1,1, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,1,0, 1,1,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 1,1,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,0,0,0, 0,0,0,1,1, 0,1,1,1,0, 1,0,0,0,1],
+				[1,0,0,0,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
+				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,1,0,0,1],
+				[1,0,0,0,0, 1,1,1,1,1, 1,1,0,0,0, 1,0,0,0,1],
 				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
 			];
 
 			var pc = new SpriteInMap();
+			pc.imune = 0;
+			var inimigos = [];
+			for(var i=0; i<5; i++){
+				inimigos[i] = new SpriteInMap();
+				inimigos[i].x = 400+32*i;
+				inimigos[i].persegue = function(pc){
+					if(pc.x < this.x){
+						this.vx = -25;
+					}else if (pc.x > this.x){
+						this.vx = +25;
+					}
+					if(pc.y<this.y && this.vy==0){
+						this.vy = this.vy - 150;
+					}
+				};
+			}
 			setInterval(desenha, 1000*dt);
+			//desenhaMapa();
 
 
 			function desenha(){
-
+				for(var i=0; i<5; i++){
+					if(pc.imune<=0 && inimigos[i].colidiuCom(pc)){
+						pc.x = 240;
+						pc.y = 40;
+						pc.vy = 0;
+						pc.imune = 3;
+					}
+					for(var j=i+1; j<5; j++){
+						if(inimigos[i].colidiuCom(inimigos[j])){
+							inimigos[j].x = 400-Math.random()*50;
+							inimigos[j].y = 40;
+							inimigos[j].vy = 0;
+						}
+					}
+				}
 				pc.move(dt);
-
+				pc.imune -= dt;
+				for(var i=0; i<5; i++){
+					inimigos[i].persegue(pc);
+					inimigos[i].move(dt);
+				}
 				//ctx.clearRect(0,0,tela.width,tela.height);
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				pc.desenha(ctx);
+				for(var i=0; i<5; i++){
+					inimigos[i].desenha(ctx);
+				}
 			}
 
 			function desenhaMapa(){
