@@ -3,6 +3,7 @@
 	<head>
 		<title>Teste</title>
 		<meta charset="utf-8" />
+		<script src="sprite.js" charset="utf-8"></script>
 	</head>
 	<body>
 		<h1>Teste</h1>
@@ -24,94 +25,64 @@
 				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
 				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,1,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,1,1, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,1,0, 1,1,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 1,1,1,1,1, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,0,0,0, 0,1,1,0,0, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,0,1,1, 0,0,0,0,0, 0,1,1,1,1, 1,0,0,0,1],
+				[1,1,0,0,0, 0,0,0,1,1, 0,0,0,0,0, 0,0,1,1,1],
+				[1,0,0,0,0, 0,1,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,1,1,0, 0,0,0,1,1, 0,0,0,1,0, 0,1,1,1,1],
+				[1,0,0,0,0, 1,1,1,1,1, 0,1,0,0,0, 0,0,0,0,1],
 				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
 			];
-			var pc = {
-				x: 32*3,
-				y: 32*2,
-				vx: 0,
-				vy: 0,
-				ax: 0,
-				ay: 0,
-				mx: 3,
-				my: 2,
-				desenha: function(ctx){
-					if(this.vx>=0){
-						ctx.drawImage(imgPc,0,0,32,32,this.x-16,this.y-32,32,32);
-					}else{
-						ctx.save();
-						ctx.translate(this.x,this.y);
-						ctx.scale(-1,1);
-						ctx.drawImage(imgPc,0,0,32,32,-16,-32,32,32);
-						ctx.restore();
+			
+			var pc = new SpriteInMap();
+			pc.imune = 0;
+			var inimigos = [];
+			for(var i=0; i<5; i++){
+				inimigos[i] = new SpriteInMap();
+				inimigos[i].x = 400+32*i;
+				inimigos[i].persegue = function(pc){
+					if(pc.x < this.x){
+						this.vx = -25;
+					}else if (pc.x > this.x){
+						this.vx = +25;
 					}
-					ctx.strokeStyle = "red";
-					ctx.beginPath();
-					ctx.moveTo(this.x-5,this.y-5);
-					ctx.lineTo(this.x+5,this.y+5);
-					ctx.lineTo(this.x+5,this.y-5);
-					ctx.lineTo(this.x-5,this.y+5);
-					ctx.closePath();
-					ctx.stroke();
-					ctx.strokeRect(this.mx*32, this.my*32,32,32);
-				},
-				move: function(dt){
-					this.vx = this.vx + this.ax*dt;
-					this.vy = this.vy + this.ay*dt + g*dt;
-					var dx = this.vx*dt;
-					var dy = this.vy*dt;
-					if(mapa[this.my][this.mx+1] == 1 && this.vx>0){
-						dx = Math.round(Math.min((this.mx+1)*32-this.x-8, this.vx*dt));
-						if(Math.abs(dx)<0.001) this.vx = 0;
+					if(pc.y<this.y && this.vy==0){
+						this.vy = this.vy - 150;
 					}
-					if(mapa[this.my][this.mx-1] == 1 && this.vx<0){
-						dx = Math.round(Math.max((this.mx*32)-this.x+8, this.vx*dt));
-						if(Math.abs(dx)<0.001) this.vx = 0;
-					}
-					if(mapa[this.my-1][this.mx] == 1 && this.vy<0){
-						dy = Math.round(Math.max((this.my)*32-this.y+16, this.vy*dt));
-					}
-					if(mapa[this.my+1][this.mx] == 1 && this.vy>0){
-						dy = Math.round(Math.min((this.my+1)*32-this.y-1, this.vy*dt));
-					}
-					if(Math.abs(dy)<0.001) this.vy = 0;
-					this.x = this.x + dx;
-					this.y = this.y + dy;
-					this.mx = Math.floor(this.x/32);
-					this.my = Math.floor(this.y/32);
-				}
+				};
 			}
+
+
 			setInterval(desenha, 1000*dt);
 			function desenha(){
+				for(var i=0; i<5; i++){
+					if(pc.imune<=0 && inimigos[i].colidiuCom(pc)){
+						pc.x = 240;
+						pc.y = 40;
+						pc.vy = 0;
+						pc.imune = 3;
+					}
+					for(var j=i+1; j<5; j++){
+						if(inimigos[i].colidiuCom(inimigos[j])){
+							inimigos[j].x = 400-Math.random()*50;
+							inimigos[j].y = 40;
+							inimigos[j].vy = 0;
+						}
+					}
+				}
 				pc.move(dt);
+				pc.imune -= dt;
+				for(var i=0; i<5; i++){
+					inimigos[i].persegue(pc);
+					inimigos[i].move(dt);
+				}
 				//ctx.clearRect(0,0,tela.width,tela.height);
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				pc.desenha(ctx);
-				ctx.beginPath()
-				ctx.strokeStyle = "blue";
-				ctx.moveTo(0,pc.my*32);
-				ctx.lineTo(tela.height, pc.my*32)
-				ctx.closePath();
-				ctx.stroke();
-				ctx.beginPath()
-				ctx.strokeStyle = "yellow";
-				ctx.moveTo(0,(pc.my+1)*32);
-				ctx.lineTo(tela.width, (pc.my+1)*32)
-				ctx.closePath();
-				ctx.stroke();
-				ctx.beginPath()
-				ctx.strokeStyle = "yellow";
-				ctx.moveTo(pc.mx*32,0);
-				ctx.lineTo(pc.mx*32,tela.height)
-				ctx.closePath();
-				ctx.stroke();
+				for(var i=0; i<5; i++){
+					inimigos[i].desenha(ctx);
+				}
 			}
 			function desenhaMapa(){
 				var linhas = tela.height/32;
