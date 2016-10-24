@@ -39,6 +39,7 @@
 			var inimigos = [];
 			for(var i=0; i<5; i++){
 				inimigos[i] = new SpriteInMap();
+				inimigos[i].imgY = 1;
 				inimigos[i].x = 400+32*i;
 				inimigos[i].persegue = function(pc){
 					if(pc.x < this.x){

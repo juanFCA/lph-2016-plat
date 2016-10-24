@@ -7,17 +7,23 @@ function SpriteInMap(){
   this.ay = 0;
   this.mx = 3;
   this.my = 2;
+  this.imgX = 0;
+  this.imgY = 0;
 }
-
 SpriteInMap.prototype.desenha = function(ctx){
     if(this.vx>=0){
-      ctx.drawImage(imgPc,0,0,32,32,this.x-16,this.y-32,32,32);
 
+      ctx.save();
+      ctx.translate(this.x,this.y);
+      ctx.scale(1,1);
+      ctx.drawImage(imgPc,
+        this.imgX*32,this.imgY*32,32,32,-16,-32,32,32);
+      ctx.restore();
     }else{
       ctx.save();
       ctx.translate(this.x,this.y);
       ctx.scale(-1,1);
-      ctx.drawImage(imgPc,0,0,32,32,-16,-32,32,32);
+      ctx.drawImage(imgPc,this.imgX*32,this.imgY*32,32,32,-16,-32,32,32);
       ctx.restore();
     }
     if(this.debug){
