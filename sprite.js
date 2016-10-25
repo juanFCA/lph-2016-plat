@@ -9,6 +9,7 @@ function SpriteInMap(){
   this.my = 2;
   this.imgX = 0;
   this.imgY = 0;
+  this.iddle = 0;
 }
 SpriteInMap.prototype.desenha = function(ctx){
     if(this.vx>=0){
@@ -17,13 +18,18 @@ SpriteInMap.prototype.desenha = function(ctx){
       ctx.translate(this.x,this.y);
       ctx.scale(1,1);
       ctx.drawImage(imgPc,
-        this.imgX*32,this.imgY*32,32,32,-16,-32,32,32);
+        (this.imgX+Math.floor(this.iddle))*32,
+        this.imgY*32,32,32,
+        -16,-32,32,32);
       ctx.restore();
     }else{
       ctx.save();
       ctx.translate(this.x,this.y);
       ctx.scale(-1,1);
-      ctx.drawImage(imgPc,this.imgX*32,this.imgY*32,32,32,-16,-32,32,32);
+      ctx.drawImage(imgPc,
+        (this.imgX+Math.floor(this.iddle))*32,
+        this.imgY*32,32,32,
+        -16,-32,32,32);
       ctx.restore();
     }
     if(this.debug){
@@ -37,9 +43,19 @@ SpriteInMap.prototype.desenha = function(ctx){
       ctx.stroke();
       ctx.strokeRect(this.mx*32, this.my*32,32,32);
     }
+    if(this.vy!=0){
+      this.imgX = 2;
+    }else{
+      this.imgX = 0;
+    }
   };
 
 SpriteInMap.prototype.move = function(dt){
+    this.iddle+=dt;
+    if(this.iddle>=2){
+      console.log(this.iddle);
+      this.iddle = 0;
+    }
     this.vx = this.vx + this.ax*dt;
     this.vy = this.vy + this.ay*dt + g*dt;
     var dx = this.vx*dt;
