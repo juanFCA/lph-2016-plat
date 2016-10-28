@@ -4,6 +4,7 @@
 		<title>Teste</title>
 		<meta charset="utf-8" />
 		<script src="sprite.js" charset="utf-8"></script>
+		<script src="machado.js" charset="utf-8"></script>
 	</head>
 	<body>
 		<h1>Teste</h1>
@@ -37,6 +38,9 @@
 
 			var pc = new SpriteInMap();
 			pc.imune = 0;
+			var machado = new Machado();
+			machado.x = 40;
+			machado.y = 40;
 			var inimigos = [];
 			for(var i=0; i<NUM_ENEMIES; i++){
 				inimigos[i] = new SpriteInMap();
@@ -65,15 +69,32 @@
 						pc.vy = 0;
 						pc.imune = 3;
 					}
+					if(inimigos[i].colidiuCom(machado)){
+						machado.x = -240;
+						machado.y = -240;
+						machado.vang = 0;
+						inimigos[i].x = 20*32-Math.random()*32;
+						inimigos[i].y = 32;
+						inimigos[i].vy = 0;
+
+					}
 					for(var j=i+1; j<NUM_ENEMIES; j++){
 						if(inimigos[i].colidiuCom(inimigos[j])){
-							inimigos[j].x = 20*32-Math.random()*32;
+							inimigos[j].x = 20*32;
 							inimigos[j].y = 32;
 							inimigos[j].vy = 0;
 						}
 					}
 				}
 				pc.move(dt);
+				if(machado.vang>0){
+					machado.moveSeVisivel(dt);
+				}else{
+					machado.x = pc.x-8;
+					machado.y = pc.y-16;
+					machado.angulo = -30;
+				}
+
 				pc.imune -= dt;
 				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].move(dt);
@@ -82,6 +103,7 @@
 				//ctx.clearRect(0,0,tela.width,tela.height);
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
+				machado.desenha(ctx);
 				pc.desenha(ctx);
 				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].desenha(ctx);
@@ -118,7 +140,16 @@
 						pc.vx =  80;
 						e.preventDefault();
 						break;
-
+					case 32:
+							if(machado.vang>0) return;
+							machado.vx = machado.vy = machado.ax = machado.ay = 0
+							machado.x = pc.x;
+							machado.y = pc.y-16;
+							machado.vx = (pc.vx>=0)?400:-400;
+							machado.vy = 0;
+							machado.vang = 560;
+							e.preventDefault();
+						break;
 				}
 			});
 			addEventListener('keyup', function(e){
