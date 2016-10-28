@@ -53,34 +53,27 @@ SpriteInMap.prototype.desenha = function(ctx){
 SpriteInMap.prototype.move = function(dt){
     this.iddle+=dt;
     if(this.iddle>=2){
-      console.log(this.iddle);
       this.iddle = 0;
     }
     this.vx = this.vx + this.ax*dt;
     this.vy = this.vy + this.ay*dt + g*dt;
-    var dx = this.vx*dt;
-    var dy = this.vy*dt;
-    if(mapa[this.my][this.mx+1] == 1 && this.vx>0){
-      dx = Math.round(Math.min((this.mx+1)*32-this.x-8, this.vx*dt));
-      if(Math.abs(dx)<0.001) this.vx = 0;
+
+    if(mapa[this.my][this.mx+1]==1 && this.vx>0){
+      this.vx = Math.min(this.vx, ((this.mx+1)*32-1-this.x)/dt);
     }
-    if(mapa[this.my][this.mx-1] == 1 && this.vx<0){
-      dx = Math.round(Math.max((this.mx*32)-this.x+8, this.vx*dt));
-      if(Math.abs(dx)<0.001) this.vx = 0;
+    if(mapa[this.my][this.mx-1]==1 && this.vx<0){
+      this.vx = -Math.min(Math.abs(this.vx), Math.abs((this.mx)*32+1-this.x)/dt);
     }
-    this.x = this.x + dx;
+    this.x = (this.x + this.vx*dt);
     this.mx = Math.floor(this.x/32);
-
-    if(mapa[this.my-1][this.mx] == 1 && this.vy<0){
-      dy = Math.round(Math.max((this.my)*32-this.y+16, this.vy*dt));
+    if(mapa[this.my-1][this.mx]==1 && this.vy<0){
+      this.vy = -Math.min(Math.abs(this.vy), (this.y-20-(this.my)*32)/dt);
     }
-    if(mapa[this.my+1][this.mx] == 1 && this.vy>0){
-      dy = Math.round(Math.min((this.my+1)*32-this.y-1, this.vy*dt));
+    if(mapa[this.my+1][this.mx]==1){
+      this.vy = Math.min(this.vy, ((this.my+1)*32-this.y-1)/dt);
     }
-    if(Math.abs(dy)<0.001) this.vy = 0;
-    this.y = this.y + dy;
 
-
+    this.y = Math.round(this.y + this.vy*dt);
     this.my = Math.floor(this.y/32);
   };
 

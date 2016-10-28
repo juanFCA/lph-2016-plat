@@ -9,6 +9,7 @@
 		<h1>Teste</h1>
 		<canvas id="tela" width="640" height="320"></canvas>
 		<script>
+			var NUM_ENEMIES= 5;
 			var tela = document.getElementById('tela');
 			var ctx = tela.getContext('2d');
 			var imgPc = new Image();
@@ -18,37 +19,37 @@
 			var imgBlock = new Image();
 			imgBlock.src = 'block.svg';
 			var x = 0;
-			var fps = 30;
+			var fps = 60;
 			var dt = 1.0/fps;
 			var g = 300;
 			var mapa = [
 				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
 				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,1,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
+				[1,0,1,1,0, 0,1,1,0,0, 0,0,1,1,1, 0,0,0,1,1],
+				[1,0,0,0,0, 0,0,0,0,0, 1,1,0,0,0, 0,0,1,0,1],
+				[1,1,1,1,0, 1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
 				[1,0,0,0,0, 0,0,0,1,1, 0,1,1,1,0, 1,0,0,0,1],
-				[1,0,0,0,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
+				[1,0,0,1,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
 				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,1,0,0,1],
-				[1,0,0,0,0, 1,1,1,1,1, 1,1,0,0,0, 1,0,0,0,1],
+				[1,0,0,0,0, 1,1,1,1,1, 1,1,0,0,0, 1,0,0,1,1],
 				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
 			];
 
 			var pc = new SpriteInMap();
 			pc.imune = 0;
 			var inimigos = [];
-			for(var i=0; i<5; i++){
+			for(var i=0; i<NUM_ENEMIES; i++){
 				inimigos[i] = new SpriteInMap();
 				inimigos[i].imgY = 1;
-				inimigos[i].x = 400+32*i;
+				inimigos[i].x = 15*32-Math.random()*32+32*i;
 				inimigos[i].persegue = function(pc){
 					if(pc.x < this.x){
-						this.vx = -25;
+						this.vx = -35;
 					}else if (pc.x > this.x){
-						this.vx = +25;
+						this.vx = +35;
 					}
-					if(pc.y<this.y && this.vy==0){
-						this.vy = this.vy - 150;
+					if(pc.y<this.y && mapa[this.my+1][this.mx]==1 && this.vy == 0 && mapa[this.my-1][this.mx]==0){
+						this.vy -= 220;
 					}
 				};
 			}
@@ -57,32 +58,32 @@
 
 
 			function desenha(){
-				for(var i=0; i<5; i++){
+				for(var i=0; i<NUM_ENEMIES; i++){
 					if(pc.imune<=0 && inimigos[i].colidiuCom(pc)){
 						pc.x = 240;
 						pc.y = 40;
 						pc.vy = 0;
 						pc.imune = 3;
 					}
-					for(var j=i+1; j<5; j++){
+					for(var j=i+1; j<NUM_ENEMIES; j++){
 						if(inimigos[i].colidiuCom(inimigos[j])){
-							inimigos[j].x = 400-Math.random()*50;
-							inimigos[j].y = 40;
+							inimigos[j].x = 20*32-Math.random()*32;
+							inimigos[j].y = 32;
 							inimigos[j].vy = 0;
 						}
 					}
 				}
 				pc.move(dt);
 				pc.imune -= dt;
-				for(var i=0; i<5; i++){
-					inimigos[i].persegue(pc);
+				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].move(dt);
+					inimigos[i].persegue(pc);
 				}
 				//ctx.clearRect(0,0,tela.width,tela.height);
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				pc.desenha(ctx);
-				for(var i=0; i<5; i++){
+				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].desenha(ctx);
 				}
 			}
@@ -104,17 +105,17 @@
 			addEventListener('keydown', function(e){
 				switch(e.keyCode){
 					case 37:
-						pc.vx = -60;
+						pc.vx = -80;
 						e.preventDefault();
 						break;
 					case 38:
 						if(pc.vy == 0 && mapa[pc.my+1][pc.mx] == 1){
-							pc.vy = pc.vy -190;
+							pc.vy = pc.vy -230;
 						}
 						e.preventDefault();
 						break;
 					case 39:
-						pc.vx =  60;
+						pc.vx =  80;
 						e.preventDefault();
 						break;
 
