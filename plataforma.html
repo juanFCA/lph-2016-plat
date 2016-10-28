@@ -10,6 +10,7 @@
 		<h1>Teste</h1>
 		<canvas id="tela" width="640" height="320"></canvas>
 		<script>
+			var zoom =2;
 			var NUM_ENEMIES= 5;
 			var tela = document.getElementById('tela');
 			var ctx = tela.getContext('2d');
@@ -62,14 +63,21 @@
 
 
 			function desenha(){
+				ctx.fillStyle = "black";
+				ctx.fillRect(0,0,tela.width,tela.height);
+				ctx.save();
+				ctx.scale(zoom,zoom);
+				ctx.translate(-pc.x+tela.width/4,-pc.y+tela.height/4);
 				for(var i=0; i<NUM_ENEMIES; i++){
 					if(pc.imune<=0 && inimigos[i].colidiuCom(pc)){
-						pc.x = 240;
-						pc.y = 40;
+						//pc.x = 240;
+						//pc.y = 40;
 						pc.vy = 0;
 						pc.imune = 3;
+						pc.vx = inimigos[i].vx;
+						pc.vy = -150;
 					}
-					if(inimigos[i].colidiuCom(machado)){
+					if(machado.vang>0 && inimigos[i].colidiuCom(machado)){
 						machado.x = -240;
 						machado.y = -240;
 						machado.vang = 0;
@@ -77,13 +85,6 @@
 						inimigos[i].y = 32;
 						inimigos[i].vy = 0;
 
-					}
-					for(var j=i+1; j<NUM_ENEMIES; j++){
-						if(inimigos[i].colidiuCom(inimigos[j])){
-							inimigos[j].x = 20*32;
-							inimigos[j].y = 32;
-							inimigos[j].vy = 0;
-						}
 					}
 				}
 				pc.move(dt);
@@ -100,14 +101,20 @@
 					inimigos[i].move(dt);
 					inimigos[i].persegue(pc);
 				}
-				//ctx.clearRect(0,0,tela.width,tela.height);
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				machado.desenha(ctx);
+				if(pc.imune>0){
+					ctx.globalAlpha = 0.2+0.6*Math.sin(8*pc.iddle*Math.PI);
+				}else{
+					ctx.globalAlpha = 1.0;
+				}
 				pc.desenha(ctx);
+				ctx.globalAlpha=1.0;
 				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].desenha(ctx);
 				}
+				ctx.restore();
 			}
 
 			function desenhaMapa(){
