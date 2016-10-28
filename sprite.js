@@ -10,14 +10,14 @@ function SpriteInMap(){
   this.imgX = 0;
   this.imgY = 0;
   this.iddle = 0;
+  this.spriteSrc = imgPc;
 }
 SpriteInMap.prototype.desenha = function(ctx){
     if(this.vx>=0){
-
       ctx.save();
       ctx.translate(this.x,this.y);
       ctx.scale(1,1);
-      ctx.drawImage(imgPc,
+      ctx.drawImage(this.spriteSrc,
         (this.imgX+Math.floor(this.iddle))*32,
         this.imgY*32,32,32,
         -16,-32,32,32);
@@ -26,7 +26,7 @@ SpriteInMap.prototype.desenha = function(ctx){
       ctx.save();
       ctx.translate(this.x,this.y);
       ctx.scale(-1,1);
-      ctx.drawImage(imgPc,
+      ctx.drawImage(this.spriteSrc,
         (this.imgX+Math.floor(this.iddle))*32,
         this.imgY*32,32,32,
         -16,-32,32,32);
