@@ -5,10 +5,12 @@
 		<meta charset="utf-8" />
 		<script src="sprite.js" charset="utf-8"></script>
 		<script src="machado.js" charset="utf-8"></script>
+	  <script src="sound.js"></script>
 	</head>
 	<body>
 		<h1>Teste</h1>
 		<canvas id="tela" width="640" height="320"></canvas>
+
 		<script>
 			var zoom =2;
 			var NUM_ENEMIES= 5;
@@ -20,6 +22,10 @@
 			imgWall.src = 'wall.svg';
 			var imgBlock = new Image();
 			imgBlock.src = 'block.svg';
+			var soundLib = new SoundLib();
+			soundLib.load("swing","swing.wav");
+			soundLib.load("monstromorre","mnstr1.wav");
+			soundLib.load("pcmorre","giant1.wav");
 			var x = 0;
 			var fps = 60;
 			var dt = 1.0/fps;
@@ -74,8 +80,9 @@
 						//pc.y = 40;
 						pc.vy = 0;
 						pc.imune = 3;
-						pc.vx = inimigos[i].vx;
+						pc.vx = 	inimigos[i].vx;
 						pc.vy = -150;
+						soundLib.play("pcmorre");
 					}
 					if(machado.vang>0 && inimigos[i].colidiuCom(machado)){
 						machado.x = -240;
@@ -84,6 +91,7 @@
 						inimigos[i].x = 20*32-Math.random()*32;
 						inimigos[i].y = 32;
 						inimigos[i].vy = 0;
+						soundLib.play("monstromorre");
 
 					}
 				}
@@ -155,6 +163,7 @@
 							machado.vx = (pc.vx>=0)?400:-400;
 							machado.vy = 0;
 							machado.vang = 560;
+							soundLib.play("swing");
 							e.preventDefault();
 						break;
 				}
