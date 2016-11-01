@@ -3,6 +3,7 @@
 	<head>
 		<title>Teste</title>
 		<meta charset="utf-8" />
+		<script src="scenario.js" charset="utf-8"></script>
 		<script src="sprite.js" charset="utf-8"></script>
 		<script src="machado.js" charset="utf-8"></script>
 	  <script src="sound.js"></script>
@@ -30,18 +31,7 @@
 			var fps = 60;
 			var dt = 1.0/fps;
 			var g = 300;
-			var mapa = [
-				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
-				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,1,1,0, 0,1,1,0,0, 0,0,1,1,1, 0,0,0,1,1],
-				[1,0,0,0,0, 0,0,0,0,0, 1,1,0,0,0, 0,0,1,0,1],
-				[1,1,1,1,0, 1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,1,1, 0,1,1,1,0, 1,0,0,0,1],
-				[1,0,0,1,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
-				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,1,0,0,1],
-				[1,0,0,0,0, 1,1,1,1,1, 1,1,0,0,0, 1,0,0,1,1],
-				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
-			];
+			//var mapa = tutorial.maps[1];
 
 			var pc = new SpriteInMap();
 			pc.imune = 0;
@@ -59,7 +49,7 @@
 					}else if (pc.x > this.x){
 						this.vx = +35;
 					}
-					if(pc.y<this.y && mapa[this.my+1][this.mx]==1 && this.vy == 0 && mapa[this.my-1][this.mx]==0){
+					if(pc.y<this.y && questTutorial.getCell(this.my+1,this.mx)==1 && this.vy == 0 && questTutorial.getCell(this.my-1,this.mx)==0){
 						this.vy -= 220;
 					}
 				};
@@ -126,11 +116,11 @@
 			}
 
 			function desenhaMapa(){
-				var linhas = tela.height/32;
-				var colunas = tela.width/32;
+				var linhas = questTutorial.getRows();
+				var colunas =  questTutorial.getCols();
 				for (var l = 0; l < linhas; l++) {
 					for (var c = 0; c < colunas; c++) {
-						if(mapa[l][c]==0){
+						if(questTutorial.getCell(l,c)==0){
 							ctx.drawImage(imgWall,c*32,l*32);
 						} else {
 							ctx.drawImage(imgBlock,c*32,l*32);
@@ -146,7 +136,7 @@
 						e.preventDefault();
 						break;
 					case 38:
-						if(pc.vy == 0 && mapa[pc.my+1][pc.mx] == 1){
+						if(pc.vy == 0 && questTutorial.getCell(pc.my+1,pc.mx) == 1){
 							pc.vy = pc.vy -230;
 						}
 						e.preventDefault();
