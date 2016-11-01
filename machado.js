@@ -19,6 +19,7 @@ Machado.prototype.desenha = function(ctx){
 }
 Machado.prototype.moveSeVisivel = function(dt){
   if(this.x<0 || this.y < 0 || this.x>tela.width || this.y> tela.height){
+    this.vang = 0;
     return;
   }
   this.move(dt);
