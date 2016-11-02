@@ -28,6 +28,7 @@
 			soundLib.load("swing","swing.wav");
 			soundLib.load("monstromorre","mnstr1.wav");
 			soundLib.load("pcmorre","giant1.wav");
+			soundLib.load("pegamoeda","coin.wav");
 			var x = 0;
 			var fps = 60;
 			var dt = 1.0/fps;
@@ -89,6 +90,7 @@
 					}
 				}
 				if(moeda.colidiuCom(pc)){
+					soundLib.play("pegamoeda");
 					moeda.x = 16+32*(1+Math.floor(Math.random()*18));
 					moeda.y = 64;
 				}
