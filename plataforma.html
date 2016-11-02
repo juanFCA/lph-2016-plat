@@ -3,49 +3,48 @@
 	<head>
 		<title>Teste</title>
 		<meta charset="utf-8" />
+		<script src="scenario.js" charset="utf-8"></script>
 		<script src="sprite.js" charset="utf-8"></script>
+		<script src="machado.js" charset="utf-8"></script>
+		<script src="moeda.js" charset="utf-8"></script>
+	  <script src="sound.js"></script>
 	</head>
 	<body>
 		<h1>Teste</h1>
 		<canvas id="tela" width="640" height="320"></canvas>
+
 		<script>
+			var zoom =2;
 			var NUM_ENEMIES= 5;
 			var tela = document.getElementById('tela');
 			var ctx = tela.getContext('2d');
-
 			var imgPc = new Image();
 			imgPc.src = 'pc.svg';
 			var imgWall = new Image();
 			imgWall.src = 'wall.svg';
 			var imgBlock = new Image();
 			imgBlock.src = 'block.svg';
-			var imgCoin = new Image();
-			imgCoin.src = 'coin.svg';
-
+			var soundLib = new SoundLib();
+			soundLib.load("swing","swing.wav");
+			soundLib.load("monstromorre","mnstr1.wav");
+			soundLib.load("pcmorre","giant1.wav");
 			var x = 0;
 			var fps = 60;
 			var dt = 1.0/fps;
 			var g = 300;
-			var mapa = [
-				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
-				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,1,1,0, 0,1,1,0,0, 0,0,1,1,1, 0,0,0,1,1],
-				[1,0,0,0,0, 0,0,0,0,0, 1,1,0,0,0, 0,0,1,0,1],
-				[1,1,1,1,0, 1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,1,1, 0,1,1,1,0, 1,0,0,0,1],
-				[1,0,0,1,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
-				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,1,0,0,1],
-				[1,0,0,0,0, 1,1,1,1,1, 1,1,0,0,0, 1,0,0,1,1],
-				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
-			];
+			//var mapa = tutorial.maps[1];
 
 			var pc = new SpriteInMap();
 			pc.imune = 0;
+			var machado = new Machado();
+			machado.x = 40;
+			machado.y = 40;
+			var moeda = new Moeda();
+
 			var inimigos = [];
 			for(var i=0; i<NUM_ENEMIES; i++){
 				inimigos[i] = new SpriteInMap();
 				inimigos[i].imgY = 1;
-				inimigos[i].spriteSrc = imgPc;
 				inimigos[i].x = 15*32-Math.random()*32+32*i;
 				inimigos[i].persegue = function(pc){
 					if(pc.x < this.x){
@@ -53,7 +52,7 @@
 					}else if (pc.x > this.x){
 						this.vx = +35;
 					}
-					if(pc.y<this.y && mapa[this.my+1][this.mx]==1 && this.vy == 0 && mapa[this.my-1][this.mx]==0){
+					if(pc.y<this.y && questTutorial.getCell(this.my+1,this.mx)==1 && this.vy == 0 && questTutorial.getCell(this.my-1,this.mx)==0){
 						this.vy -= 220;
 					}
 				};
@@ -61,55 +60,78 @@
 			setInterval(desenha, 1000*dt);
 			//desenhaMapa();
 
-			var coin = new SpriteInMap();
-			coin.spriteSrc = imgCoin;
-			coin.x = Math.random()*15*32+32;
 
 			function desenha(){
+				ctx.fillStyle = "black";
+				ctx.fillRect(0,0,tela.width,tela.height);
+				ctx.save();
+				ctx.scale(zoom,zoom);
+				ctx.translate(-pc.x+tela.width/4,-pc.y+tela.height/4);
 				for(var i=0; i<NUM_ENEMIES; i++){
 					if(pc.imune<=0 && inimigos[i].colidiuCom(pc)){
-						pc.x = 240;
-						pc.y = 40;
+						//pc.x = 240;
+						//pc.y = 40;
 						pc.vy = 0;
 						pc.imune = 3;
+						pc.vx = 	inimigos[i].vx;
+						pc.vy = -150;
+						soundLib.play("pcmorre");
 					}
-					for(var j=i+1; j<NUM_ENEMIES; j++){
-						if(inimigos[i].colidiuCom(inimigos[j])){
-							inimigos[j].x = 20*32-Math.random()*32;
-							inimigos[j].y = 32;
-							inimigos[j].vy = 0;
-						}
+					if(machado.vang>0 && inimigos[i].colidiuCom(machado)){
+						machado.x = -240;
+						machado.y = -240;
+						machado.vang = 0;
+						inimigos[i].x = 20*32-Math.random()*32;
+						inimigos[i].y = 32;
+						inimigos[i].vy = 0;
+						soundLib.play("monstromorre");
+
 					}
 				}
-				if(coin.colidiuCom(pc)){
-					coin.x = Math.random()*15*32+32;
-					coin.y = 40;
-					coin.vy = 0;
+				if(moeda.colidiuCom(pc)){
+					moeda.x = 16+32*(1+Math.floor(Math.random()*18));
+					moeda.y = 64;
 				}
+
 				pc.move(dt);
+				moeda.move(dt);
+
+				if(machado.vang>0){
+					machado.moveSeVisivel(dt);
+				}else{
+					machado.x = pc.x-8;
+					machado.y = pc.y-16;
+					machado.angulo = -30;
+				}
+
 				pc.imune -= dt;
 				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].move(dt);
 					inimigos[i].persegue(pc);
 				}
-				//ctx.clearRect(0,0,tela.width,tela.height);
-
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
+				machado.desenha(ctx);
+				moeda.desenha(ctx);
+				if(pc.imune>0){
+					ctx.globalAlpha = 0.2+0.6*Math.sin(8*pc.iddle*Math.PI);
+				}else{
+					ctx.globalAlpha = 1.0;
+				}
 				pc.desenha(ctx);
+				ctx.globalAlpha=1.0;
 				for(var i=0; i<NUM_ENEMIES; i++){
 					inimigos[i].desenha(ctx);
 				}
-				coin.move(dt);
-				coin.desenha(ctx);
+				ctx.restore();
 			}
 
 			function desenhaMapa(){
-				var linhas = tela.height/32;
-				var colunas = tela.width/32;
+				var linhas = questTutorial.getRows();
+				var colunas =  questTutorial.getCols();
 				for (var l = 0; l < linhas; l++) {
 					for (var c = 0; c < colunas; c++) {
-						if(mapa[l][c]==0){
+						if(questTutorial.getCell(l,c)==0){
 							ctx.drawImage(imgWall,c*32,l*32);
 						} else {
 							ctx.drawImage(imgBlock,c*32,l*32);
@@ -125,7 +147,7 @@
 						e.preventDefault();
 						break;
 					case 38:
-						if(pc.vy == 0 && mapa[pc.my+1][pc.mx] == 1){
+						if(pc.vy == 0 && questTutorial.getCell(pc.my+1,pc.mx) == 1){
 							pc.vy = pc.vy -230;
 						}
 						e.preventDefault();
@@ -134,7 +156,17 @@
 						pc.vx =  80;
 						e.preventDefault();
 						break;
-
+					case 32:
+							if(machado.vang>0) return;
+							machado.vx = machado.vy = machado.ax = machado.ay = 0
+							machado.x = pc.x;
+							machado.y = pc.y-16;
+							machado.vx = (pc.vx>=0)?400:-400;
+							machado.vy = 0;
+							machado.vang = 560;
+							soundLib.play("swing");
+							e.preventDefault();
+						break;
 				}
 			});
 			addEventListener('keyup', function(e){
