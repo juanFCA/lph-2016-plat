@@ -6,6 +6,7 @@
 		<script src="scenario.js" charset="utf-8"></script>
 		<script src="sprite.js" charset="utf-8"></script>
 		<script src="machado.js" charset="utf-8"></script>
+		<script src="moeda.js" charset="utf-8"></script>
 	  <script src="sound.js"></script>
 	</head>
 	<body>
@@ -27,6 +28,7 @@
 			soundLib.load("swing","swing.wav");
 			soundLib.load("monstromorre","mnstr1.wav");
 			soundLib.load("pcmorre","giant1.wav");
+			soundLib.load("pegamoeda","coin.wav");
 			var x = 0;
 			var fps = 60;
 			var dt = 1.0/fps;
@@ -38,6 +40,8 @@
 			var machado = new Machado();
 			machado.x = 40;
 			machado.y = 40;
+			var moeda = new Moeda();
+
 			var inimigos = [];
 			for(var i=0; i<NUM_ENEMIES; i++){
 				inimigos[i] = new SpriteInMap();
@@ -85,7 +89,15 @@
 
 					}
 				}
+				if(moeda.colidiuCom(pc)){
+					soundLib.play("pegamoeda");
+					moeda.x = 16+32*(1+Math.floor(Math.random()*18));
+					moeda.y = 64;
+				}
+
 				pc.move(dt);
+				moeda.move(dt);
+
 				if(machado.vang>0){
 					machado.moveSeVisivel(dt);
 				}else{
@@ -102,6 +114,7 @@
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				machado.desenha(ctx);
+				moeda.desenha(ctx);
 				if(pc.imune>0){
 					ctx.globalAlpha = 0.2+0.6*Math.sin(8*pc.iddle*Math.PI);
 				}else{
