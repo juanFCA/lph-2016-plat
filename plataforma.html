@@ -3,13 +3,16 @@
 	<head>
 		<title>Teste</title>
 		<meta charset="utf-8" />
+		<script src="scenario.js" charset="utf-8"></script>
 		<script src="sprite.js" charset="utf-8"></script>
 		<script src="machado.js" charset="utf-8"></script>
-		<script src="sound.js" charset="utf-8"></script>
+		<script src="moeda.js" charset="utf-8"></script>
+	    <script src="sound.js" charset="utf-8"></script>
 	</head>
 	<body>
 		<h1>Teste</h1>
 		<canvas id="tela" width="640" height="320"></canvas>
+
 		<script>
 			var zoom =2;
 			var NUM_ENEMIES= 5;
@@ -22,31 +25,23 @@
 			var imgBlock = new Image();
 			imgBlock.src = 'block.svg';
 			var soundLib = new SoundLib();
-			soundLib.load("swing", "swing.wav");
-			soundLib.load("monstromorre", "mnstr1.wav");
-			soundLib.load("pcmorre", "giant1.wav");
+			soundLib.load("swing","swing.wav");
+			soundLib.load("monstromorre","mnstr1.wav");
+			soundLib.load("pcmorre","giant1.wav");
+			soundLib.load("pegamoeda","coin.wav");
 			var x = 0;
 			var fps = 60;
 			var dt = 1.0/fps;
 			var g = 300;
-			var mapa = [
-				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
-				[1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,1,1,0, 0,1,1,0,0, 0,0,1,1,1, 0,0,0,1,1],
-				[1,0,0,0,0, 0,0,0,0,0, 1,1,0,0,0, 0,0,1,0,1],
-				[1,1,1,1,0, 1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1],
-				[1,0,0,0,0, 0,0,0,1,1, 0,1,1,1,0, 1,0,0,0,1],
-				[1,0,0,1,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
-				[1,0,0,0,0, 0,0,1,1,1, 0,0,0,0,0, 0,1,0,0,1],
-				[1,0,0,0,0, 1,1,1,1,1, 1,1,0,0,0, 1,0,0,1,1],
-				[1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
-			];
+			//var mapa = tutorial.maps[1];
 
 			var pc = new SpriteInMap();
 			pc.imune = 0;
 			var machado = new Machado();
 			machado.x = 40;
 			machado.y = 40;
+			var moeda = new Moeda();
+
 			var inimigos = [];
 			for(var i=0; i<NUM_ENEMIES; i++){
 				inimigos[i] = new SpriteInMap();
@@ -58,7 +53,7 @@
 					}else if (pc.x > this.x){
 						this.vx = +35;
 					}
-					if(pc.y<this.y && mapa[this.my+1][this.mx]==1 && this.vy == 0 && mapa[this.my-1][this.mx]==0){
+					if(pc.y<this.y && questTutorial.getCell(this.my+1,this.mx)==1 && this.vy == 0 && questTutorial.getCell(this.my-1,this.mx)==0){
 						this.vy -= 220;
 					}
 				};
@@ -79,9 +74,9 @@
 						//pc.y = 40;
 						pc.vy = 0;
 						pc.imune = 3;
-						pc.vx = inimigos[i].vx;
+						pc.vx = 	inimigos[i].vx;
 						pc.vy = -150;
-						soundLib.load("pcmorre");
+						soundLib.play("pcmorre");
 					}
 					if(machado.vang>0 && inimigos[i].colidiuCom(machado)){
 						machado.x = -240;
@@ -90,10 +85,19 @@
 						inimigos[i].x = 20*32-Math.random()*32;
 						inimigos[i].y = 32;
 						inimigos[i].vy = 0;
-						soundLib.load("monstromorre");
+						soundLib.play("monstromorre");
+
 					}
 				}
+				if(moeda.colidiuCom(pc)){
+					soundLib.play("pegamoeda");
+					moeda.x = 16+32*(1+Math.floor(Math.random()*18));
+					moeda.y = 64;
+				}
+
 				pc.move(dt);
+				moeda.move(dt);
+
 				if(machado.vang>0){
 					machado.moveSeVisivel(dt);
 				}else{
@@ -110,6 +114,7 @@
 				desenhaMapa();
 				ctx.fillText(x++,50,20);
 				machado.desenha(ctx);
+				moeda.desenha(ctx);
 				if(pc.imune>0){
 					ctx.globalAlpha = 0.2+0.6*Math.sin(8*pc.iddle*Math.PI);
 				}else{
@@ -124,11 +129,11 @@
 			}
 
 			function desenhaMapa(){
-				var linhas = tela.height/32;
-				var colunas = tela.width/32;
+				var linhas = questTutorial.getRows();
+				var colunas =  questTutorial.getCols();
 				for (var l = 0; l < linhas; l++) {
 					for (var c = 0; c < colunas; c++) {
-						if(mapa[l][c]==0){
+						if(questTutorial.getCell(l,c)==0){
 							ctx.drawImage(imgWall,c*32,l*32);
 						} else {
 							ctx.drawImage(imgBlock,c*32,l*32);
@@ -144,7 +149,7 @@
 						e.preventDefault();
 						break;
 					case 38:
-						if(pc.vy == 0 && mapa[pc.my+1][pc.mx] == 1){
+						if(pc.vy == 0 && questTutorial.getCell(pc.my+1,pc.mx) == 1){
 							pc.vy = pc.vy -230;
 						}
 						e.preventDefault();
@@ -161,7 +166,7 @@
 							machado.vx = (pc.vx>=0)?400:-400;
 							machado.vy = 0;
 							machado.vang = 560;
-							soundLib.load("swing");
+							soundLib.play("swing");
 							e.preventDefault();
 						break;
 				}

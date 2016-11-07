@@ -15,8 +15,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="wall.svg"
-   inkscape:export-filename="/home/igor/Dropbox/ensino/cesjf/lph/lph-2016-plat/wall.png"
+   sodipodi:docname="block.svg"
+   inkscape:export-filename="/home/igor/Dropbox/ensino/cesjf/lph/lph-2016-plat/block.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="15.34375"
-     inkscape:cx="16"
+     inkscape:cx="0.52138493"
      inkscape:cy="16"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -52,7 +52,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
