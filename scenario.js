@@ -1,9 +1,16 @@
 function Map(){
-  this.grid = [
-    [1, 1, 1],
-    [1, 0, 1],
-    [1, 1, 1]
-  ];
+  this.grid = [];
+  for (var i = 0; i < 17; i++) {
+    this.grid[i] = [];
+    for (var j = 0; j < 33; j++) {
+      if(i==0 || j==0 || i==8 || j==8 || i==16 || j==16 || j==24 || j==32){
+        this.grid[i][j] = 1;
+      }
+      else{
+        this.grid[i][j] = 0;
+      }
+    }
+  }
 }
 Map.prototype.setGrid = function(grid){
   this.grid = grid;
@@ -29,18 +36,29 @@ Scenario.prototype.getCols = function(){
   return this.maps[this.level].grid[0].length;
 }
 
-Scenario.prototype.criarLevel = function(){
-    for (var i = 1; i < 9; i++) {
-        return i.setGrid[7][7];
-    }
-}
+var tutorial01 = new Map();
 
-var 1 = new Map();
-1 = 1.setGrid;
+var tutorial02 = new Map();
+/*tutorial02.setGrid([
+  [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
+  [1,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1, 0,0,0,0,1],
+  [1,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1, 0,0,0,1,1],
+  [1,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1, 0,0,1,0,1],
+  [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
+  [1,0,0,0,1, 0,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1],
+  [1,0,0,0,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
+  [1,0,0,0,1, 0,0,0,0,1, 0,0,0,0,0, 0,1,0,0,1],
+  [1,0,0,0,1, 1,0,0,0,1, 1,1,0,0,0, 1,0,0,1,1],
+  [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
+]);*/
 
 var questTutorial = new Scenario();
-questTutorial.setMap(1, 1);
+questTutorial.setMap(1, tutorial01);
 questTutorial.setMap(2, tutorial02);
+
+
+
+
 
 
 // largura = SIZE(7)*NumCol(4)+NumCol+1(5)
