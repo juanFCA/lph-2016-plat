@@ -15,7 +15,6 @@ function Map(){
 Map.prototype.setGrid = function(grid){
   this.grid = grid;
 }
-
 function Scenario(){
   this.level = 1;
   this.maps = [ new Map()];
@@ -36,25 +35,15 @@ Scenario.prototype.getCols = function(){
   return this.maps[this.level].grid[0].length;
 }
 
-var tutorial01 = new Map();
-
-var tutorial02 = new Map();
-/*tutorial02.setGrid([
-  [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
-  [1,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1, 0,0,0,0,1],
-  [1,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1, 0,0,0,1,1],
-  [1,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1, 0,0,1,0,1],
-  [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1],
-  [1,0,0,0,1, 0,0,0,0,1, 0,0,0,0,0, 1,0,0,0,1],
-  [1,0,0,0,1, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1],
-  [1,0,0,0,1, 0,0,0,0,1, 0,0,0,0,0, 0,1,0,0,1],
-  [1,0,0,0,1, 1,0,0,0,1, 1,1,0,0,0, 1,0,0,1,1],
-  [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1]
-]);*/
+var tutorial = [ 0, 1, 2, 3];
+for (var i=0; i<tutorial.length; i++) {  
+  tutorial[i] = new Map();  
+}  
 
 var questTutorial = new Scenario();
-questTutorial.setMap(1, tutorial01);
-questTutorial.setMap(2, tutorial02);
+for (var i=0; i<4; i++) {  
+  questTutorial.setMap(i, tutorial[i]);
+}
 
 
 

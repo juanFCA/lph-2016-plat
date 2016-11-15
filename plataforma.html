@@ -8,10 +8,20 @@
 		<script src="machado.js" charset="utf-8"></script>
 		<script src="moeda.js" charset="utf-8"></script>
 	    <script src="sound.js" charset="utf-8"></script>
+	    <link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<h1>Teste</h1>
-		<canvas id="tela" width="640" height="320"></canvas>
+		<div id="corpojogo">
+       		<div id="cabeçalho">
+       			<div id="titulo">Trabalho de Hipermídia 2</div>
+       			<div class="painel" id="pvida"><canvas height="36" width="280" id="tvida"></div>
+            	<div class="painel" id="pnivel">Nível: <var type="number" id="pfase">1</var></div>
+         	</div>
+         	<div id="telajogo">
+            	<canvas id="tela" width="680" height="320"></canvas>
+        	</div>
+        </div>
+		
 
 		<script>
 			var zoom =2;
@@ -50,10 +60,11 @@
 				inimigos[i].persegue = function(pc){
 					if(pc.x < this.x){
 						this.vx = -35;
-					}else if (pc.x > this.x){
+					}
+					else if (pc.x > this.x){
 						this.vx = +35;
 					}
-					if(pc.y<this.y && questTutorial.getCell(this.my+1,this.mx)==1 && this.vy == 0 && questTutorial.getCell(this.my-1,this.mx)==0){
+					else if(pc.y<this.y && questTutorial.getCell(this.my+1,this.mx)==1 && this.vy == 0 && questTutorial.getCell(this.my-1,this.mx)==0){
 						this.vy -= 220;
 					}
 				};
@@ -112,7 +123,7 @@
 					inimigos[i].persegue(pc);
 				}
 				desenhaMapa();
-				ctx.fillText(x++,50,20);
+				//ctx.fillText(x++,50,20);
 				machado.desenha(ctx);
 				moeda.desenha(ctx);
 				if(pc.imune>0){
