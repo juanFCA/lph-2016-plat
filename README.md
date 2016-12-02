@@ -1,1 +1,2 @@
-# lph-2016-plat
+# Trabalho-LPH2
+Trabalho para disciplina de Hipermídia 
